@@ -8,4 +8,8 @@ public class SceneUIHandler : MonoBehaviour
     {
         gameObjectToToggle.SetActive(!gameObjectToToggle.activeSelf);
     }
+    public void JointChooserLeft()
+    {
+        
+    }
 }

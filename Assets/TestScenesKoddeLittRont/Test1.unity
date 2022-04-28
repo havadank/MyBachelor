@@ -840,7 +840,7 @@ GameObject:
   m_Component:
   - component: {fileID: 89521832}
   - component: {fileID: 89521831}
-  - component: {fileID: 89521830}
+  - component: {fileID: 89521833}
   m_Layer: 0
   m_Name: ur5e
   m_TagString: robot
@@ -848,28 +848,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &89521830
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 89521829}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d607ea46a579d44c4b19a6322ce4b9b2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  selectedJoint: 
-  selectedIndex: 0
-  control: 0
-  stiffness: 10000
-  damping: 100
-  forceLimit: 1000
-  speed: 30
-  torque: 100
-  acceleration: 10
-  highLightColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!114 &89521831
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -893,15 +871,37 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 89521829}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.769, y: 0, z: -1.269}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 516007083}
   - {fileID: 326335849}
-  m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_Father: {fileID: 290554930}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &89521833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 89521829}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d607ea46a579d44c4b19a6322ce4b9b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selectedJoint: 
+  selectedIndex: 0
+  control: 0
+  stiffness: 10000
+  damping: 100
+  forceLimit: 1000
+  speed: 30
+  torque: 100
+  acceleration: 10
+  highLightColor: {r: 0.95686275, g: 0.09411765, b: 0.09803922, a: 0.9490196}
 --- !u!114 &109982563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -990,7 +990,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7631001c063f69d4495bca90731abab2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayInertiaGizmo: 0
+  displayInertiaGizmo: 1
   useUrdfData: 1
   centerOfMass: {x: -0, y: 0.2125, z: 0}
   inertiaTensor: {x: 0.13388579, y: 0.0151074, z: 0.13388579}
@@ -1042,9 +1042,9 @@ ArticulationBody:
     forceLimit: 3.4028235e+38
     target: 0
     targetVelocity: 0
-  m_LinearDamping: 0
-  m_AngularDamping: 0
-  m_JointFriction: 0
+  m_LinearDamping: 0.05
+  m_AngularDamping: 0.05
+  m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
   m_CollisionDetectionMode: 0
@@ -1876,7 +1876,12 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 89521832}
+  - {fileID: 1759515282}
+  - {fileID: 704750581}
+  - {fileID: 1714265323}
+  - {fileID: 932987978}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2324,7 +2329,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 392386503}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
@@ -2448,21 +2453,10 @@ MonoBehaviour:
   OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: ToggleRecording
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: SaveRecordedInput
+      - m_Target: {fileID: 89521833}
+        m_TargetAssemblyTypeName: Unity.Robotics.UrdfImporter.Control.Controller,
+          Unity.Robotics.UrdfImporter
+        m_MethodName: ButtonJointSubtractionUpdate
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3015,7 +3009,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7631001c063f69d4495bca90731abab2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayInertiaGizmo: 0
+  displayInertiaGizmo: 1
   useUrdfData: 1
   centerOfMass: {x: -0.127, y: 0, z: 0}
   inertiaTensor: {x: 0.002559899, y: 0.0021942, z: 0.002559899}
@@ -3067,9 +3061,9 @@ ArticulationBody:
     forceLimit: 3.4028235e+38
     target: 0
     targetVelocity: 0
-  m_LinearDamping: 0
-  m_AngularDamping: 0
-  m_JointFriction: 0
+  m_LinearDamping: 0.05
+  m_AngularDamping: 0.05
+  m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
   m_CollisionDetectionMode: 0
@@ -3152,7 +3146,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7631001c063f69d4495bca90731abab2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayInertiaGizmo: 0
+  displayInertiaGizmo: 1
   useUrdfData: 1
   centerOfMass: {x: -0, y: 0, z: 0}
   inertiaTensor: {x: 0.0044333315, y: 0.0072000003, z: 0.0044333315}
@@ -4465,6 +4459,7 @@ Transform:
   m_Children:
   - {fileID: 2030499476}
   - {fileID: 1436384932}
+  - {fileID: 739567417}
   m_Father: {fileID: 861304236}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4495,9 +4490,9 @@ ArticulationBody:
   serializedVersion: 3
   m_Mass: 1
   m_ParentAnchorPosition: {x: -0.100000024, y: 0.00000017881393, z: -0.0000007152558}
-  m_ParentAnchorRotation: {x: 0, y: 0, z: 1.0000004, w: 0}
+  m_ParentAnchorRotation: {x: 0, y: 0, z: 1.0000002, w: 0}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
-  m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_AnchorRotation: {x: 0, y: 0, z: 0.70710677, w: 0.70710677}
   m_ComputeParentAnchor: 1
   m_ArticulationJointType: 0
   m_LinearX: 2
@@ -5074,7 +5069,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 663707439}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
@@ -5198,9 +5193,10 @@ MonoBehaviour:
   OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: OnToggleHandMesh
+      - m_Target: {fileID: 89521833}
+        m_TargetAssemblyTypeName: Unity.Robotics.UrdfImporter.Control.Controller,
+          Unity.Robotics.UrdfImporter
+        m_MethodName: ButtonJointAdditionUpdate
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5728,8 +5724,8 @@ Transform:
   m_LocalPosition: {x: -6.996775, y: -0.59553105, z: 2.669624}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_Father: {fileID: 290554930}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &722241638
 GameObject:
@@ -6443,6 +6439,191 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.032, y: 0.032, z: 0.016}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &739567416
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 739567417}
+  - component: {fileID: 739567423}
+  - component: {fileID: 739567422}
+  - component: {fileID: 739567421}
+  - component: {fileID: 739567420}
+  - component: {fileID: 739567418}
+  - component: {fileID: 739567424}
+  - component: {fileID: 739567419}
+  m_Layer: 0
+  m_Name: toolInteractable
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &739567417
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 739567416}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: 0.0189, z: 0}
+  m_LocalScale: {x: 0.05, y: 0.05, z: 0.05}
+  m_Children: []
+  m_Father: {fileID: 633339181}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &739567418
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 739567416}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.0000008, y: 1.0000002, z: 1.0000006}
+  m_Center: {x: 0.0000013113022, y: 0, z: -0.0000038146973}
+--- !u!54 &739567419
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 739567416}
+  serializedVersion: 2
+  m_Mass: 10
+  m_Drag: 10
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &739567420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 739567416}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a98de877dee5fc341b4eb59dfdab266c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  autoConstraintSelection: 1
+  selectedConstraints: []
+--- !u!135 &739567421
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 739567416}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &739567422
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 739567416}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: b825b866c52753f40a1d7a6e7694734f, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &739567423
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 739567416}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &739567424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 739567416}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 181cd563a8349c34ea8978b0bc8d9c7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hostTransform: {fileID: 739567417}
+  manipulationType: 3
+  twoHandedManipulationType: 7
+  allowFarManipulation: 1
+  useForcesForNearManipulation: 1
+  oneHandRotationModeNear: 1
+  oneHandRotationModeFar: 1
+  releaseBehavior: 3
+  transformSmoothingLogicType:
+    reference: Microsoft.MixedReality.Toolkit.Utilities.DefaultTransformSmoothingLogic,
+      Microsoft.MixedReality.Toolkit.SDK
+  smoothingFar: 1
+  smoothingNear: 1
+  moveLerpTime: 0.001
+  rotateLerpTime: 0.001
+  scaleLerpTime: 0.001
+  enableConstraints: 1
+  constraintsManager: {fileID: 739567420}
+  elasticsManager: {fileID: 0}
+  onManipulationStarted:
+    m_PersistentCalls:
+      m_Calls: []
+  onManipulationEnded:
+    m_PersistentCalls:
+      m_Calls: []
+  onHoverEntered:
+    m_PersistentCalls:
+      m_Calls: []
+  onHoverExited:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &752950511
 GameObject:
   m_ObjectHideFlags: 0
@@ -7433,7 +7614,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7631001c063f69d4495bca90731abab2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayInertiaGizmo: 0
+  displayInertiaGizmo: 1
   useUrdfData: 1
   centerOfMass: {x: -0.0771, y: 0, z: 0}
   inertiaTensor: {x: 0.00009890409, y: 0.00013211719, z: 0.00009890409}
@@ -7485,9 +7666,9 @@ ArticulationBody:
     forceLimit: 3.4028235e+38
     target: 0
     targetVelocity: 0
-  m_LinearDamping: 0
-  m_AngularDamping: 0
-  m_JointFriction: 0
+  m_LinearDamping: 0.05
+  m_AngularDamping: 0.05
+  m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
   m_CollisionDetectionMode: 0
@@ -7600,7 +7781,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 871424877}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
@@ -7724,9 +7905,10 @@ MonoBehaviour:
   OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: ToggleRecording
+      - m_Target: {fileID: 89521833}
+        m_TargetAssemblyTypeName: Unity.Robotics.UrdfImporter.Control.Controller,
+          Unity.Robotics.UrdfImporter
+        m_MethodName: ButtonRightUpdate
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -8687,13 +8869,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 932987970}
-  m_LocalRotation: {x: 0.004959417, y: -0.11367407, z: -0.0052793794, w: 0.99349165}
+  m_LocalRotation: {x: 0.0049594175, y: -0.113674074, z: -0.00527938, w: 0.9934917}
   m_LocalPosition: {x: -0.242, y: 0.044, z: 0.588}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.01}
+  m_LocalScale: {x: 0.1, y: 0.10000001, z: 0.01}
   m_Children:
   - {fileID: 733220738}
-  m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_Father: {fileID: 290554930}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0.496, y: -13.058, z: -0.666}
 --- !u!4 &935122767 stripped
 Transform:
@@ -9250,7 +9432,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1070986315
 MonoBehaviour:
@@ -9266,9 +9448,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   topicName: /ur5e_joints
   ur5e: {fileID: 89521829}
-  target: {fileID: 0}
-  targetPlacement: {fileID: 0}
   publishMessageFrequency: 0.5
+  q_actual:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  q_target: []
+  qd_target: []
+  qdd_target: []
+  i_target: []
+  m_target: []
+  qd_actual: []
+  i_actual: []
+  tool_acc_values: []
+  tcp_force: []
+  tool_vector: []
+  tcp_speed: []
+  digital_input_bits: 0
+  motor_temperatures: []
+  controller_timer: 0
+  test_value: 0
+  robot_mode: 0
+  joint_modes: []
 --- !u!4 &1072290380 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: dfa5f720adce1d447b28156066440341, type: 3}
@@ -9428,7 +9632,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7631001c063f69d4495bca90731abab2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayInertiaGizmo: 0
+  displayInertiaGizmo: 1
   useUrdfData: 1
   centerOfMass: {x: -0, y: 0, z: 0}
   inertiaTensor: {x: 0.010267496, y: 0.00666, z: 0.010267496}
@@ -9480,9 +9684,9 @@ ArticulationBody:
     forceLimit: 3.4028235e+38
     target: 0
     targetVelocity: 0
-  m_LinearDamping: 0
-  m_AngularDamping: 0
-  m_JointFriction: 0
+  m_LinearDamping: 0.05
+  m_AngularDamping: 0.05
+  m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
   m_CollisionDetectionMode: 0
@@ -9595,9 +9799,9 @@ ArticulationBody:
   serializedVersion: 3
   m_Mass: 1
   m_ParentAnchorPosition: {x: -0.100000024, y: 0.00000017881393, z: -0.0000007152558}
-  m_ParentAnchorRotation: {x: -0.5000002, y: -0.5000002, z: 0.5000002, w: 0.5000002}
+  m_ParentAnchorRotation: {x: -0.5000001, y: -0.5000001, z: 0.5000001, w: 0.5000001}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
-  m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_AnchorRotation: {x: 0, y: 0, z: 0.70710677, w: 0.70710677}
   m_ComputeParentAnchor: 1
   m_ArticulationJointType: 0
   m_LinearX: 2
@@ -9714,7 +9918,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7631001c063f69d4495bca90731abab2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayInertiaGizmo: 0
+  displayInertiaGizmo: 1
   useUrdfData: 1
   centerOfMass: {x: -0, y: 0.196, z: 0}
   inertiaTensor: {x: 0.03117962, y: 0.004095, z: 0.03117962}
@@ -9766,9 +9970,9 @@ ArticulationBody:
     forceLimit: 3.4028235e+38
     target: 0
     targetVelocity: 0
-  m_LinearDamping: 0
-  m_AngularDamping: 0
-  m_JointFriction: 0
+  m_LinearDamping: 0.05
+  m_AngularDamping: 0.05
+  m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
   m_CollisionDetectionMode: 0
@@ -14038,7 +14242,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7631001c063f69d4495bca90731abab2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayInertiaGizmo: 0
+  displayInertiaGizmo: 1
   useUrdfData: 1
   centerOfMass: {x: -0, y: 0.1, z: 0}
   inertiaTensor: {x: 0.002559899, y: 0.0021942, z: 0.002559899}
@@ -14055,9 +14259,9 @@ ArticulationBody:
   serializedVersion: 3
   m_Mass: 1.219
   m_ParentAnchorPosition: {x: -0.127, y: -1.1368684e-13, z: -0.00000071525585}
-  m_ParentAnchorRotation: {x: 0, y: 0, z: -0.707107, w: 0.707107}
+  m_ParentAnchorRotation: {x: 0, y: 0, z: 0.70710695, w: -0.70710695}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
-  m_AnchorRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
+  m_AnchorRotation: {x: 0, y: 0, z: 0.70710677, w: -0.70710677}
   m_ComputeParentAnchor: 1
   m_ArticulationJointType: 2
   m_LinearX: 1
@@ -14090,9 +14294,9 @@ ArticulationBody:
     forceLimit: 3.4028235e+38
     target: 0
     targetVelocity: 0
-  m_LinearDamping: 0
-  m_AngularDamping: 0
-  m_JointFriction: 0
+  m_LinearDamping: 0.05
+  m_AngularDamping: 0.05
+  m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
   m_CollisionDetectionMode: 0
@@ -14205,7 +14409,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1688848404}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
@@ -14329,9 +14533,10 @@ MonoBehaviour:
   OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: OnToggleHandMesh
+      - m_Target: {fileID: 89521833}
+        m_TargetAssemblyTypeName: Unity.Robotics.UrdfImporter.Control.Controller,
+          Unity.Robotics.UrdfImporter
+        m_MethodName: ButtonLeftUpdate
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -14727,10 +14932,10 @@ Transform:
   m_GameObject: {fileID: 1714265319}
   m_LocalRotation: {x: -0.056940377, y: -0.05704753, z: 0.060227044, w: 0.9949252}
   m_LocalPosition: {x: -0.59, y: 0.142, z: 0.329}
-  m_LocalScale: {x: 0.15000002, y: 0.15000002, z: 0.14999999}
+  m_LocalScale: {x: 0.15000004, y: 0.15000004, z: 0.14999999}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_Father: {fileID: 290554930}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: -6.11, y: -6.953, z: 7.3}
 --- !u!114 &1714265324
 MonoBehaviour:
@@ -15829,8 +16034,8 @@ Transform:
   - {fileID: 702523162}
   - {fileID: 1148189633}
   - {fileID: 1110643162}
-  m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_Father: {fileID: 290554930}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1763247638
 GameObject:
