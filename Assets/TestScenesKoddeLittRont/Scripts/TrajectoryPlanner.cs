@@ -11,7 +11,7 @@ public class TrajectoryPlanner : MonoBehaviour
 {
     // Hardcoded variables
     const int k_NumRobotJoints = 6;
-    const float k_JointAssignmentWait = 0.1f;
+    const float k_JointAssignmentWait = 0.9f; //0.1f
     const float k_PoseAssignmentWait = 0.5f;
 
     // Variables required for ROS communication

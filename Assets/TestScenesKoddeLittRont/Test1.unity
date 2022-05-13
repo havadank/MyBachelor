@@ -629,12 +629,12 @@ MonoBehaviour:
   selectedJoint: 
   selectedIndex: 0
   control: 0
-  stiffness: 1000
+  stiffness: 10000
   damping: 100
   forceLimit: 1000
-  speed: 100
+  speed: 30
   torque: 100
-  acceleration: 100
+  acceleration: 10
   activateEEIK: 0
   Target: {fileID: 1052781026}
   threshold: 0.1
