@@ -12,7 +12,7 @@ public class TrajectoryPlanner : MonoBehaviour
     // Hardcoded variables
     const int k_NumRobotJoints = 6;
     const float k_JointAssignmentWait = 0.9f; //0.1f
-    const float k_PoseAssignmentWait = 0.5f;
+    const float k_PoseAssignmentWait = 0.9f;  //0.5
 
     // Variables required for ROS communication
     [SerializeField]
@@ -31,7 +31,7 @@ public class TrajectoryPlanner : MonoBehaviour
 
     // Assures that the gripper is always positioned above the m_Target cube before grasping.
     readonly Quaternion m_PickOrientation = Quaternion.Euler(90, 90, 0);
-    readonly Vector3 m_PickPoseOffset = Vector3.up * 0.1f;
+    readonly Vector3 m_PickPoseOffset = Vector3.up * 0.01f;
 
     // Articulation Bodies
     ArticulationBody[] m_JointArticulationBodies;
@@ -128,7 +128,7 @@ public class TrajectoryPlanner : MonoBehaviour
         // Pick Pose
         request.pick_pose = new PoseMsg
         {
-            position = (m_Target.transform.position + m_PickPoseOffset).To<FLU>(),
+            position = (m_Target.transform.localPosition + m_PickPoseOffset).To<FLU>(),
 
             // The hardcoded x/z angles assure that the gripper is always positioned above the target cube before grasping.
             orientation = Quaternion.Euler(90, m_Target.transform.eulerAngles.y, 0).To<FLU>()
@@ -137,7 +137,7 @@ public class TrajectoryPlanner : MonoBehaviour
         // Place Pose
         request.place_pose = new PoseMsg
         {
-            position = (m_TargetPlacement.transform.position + m_PickPoseOffset).To<FLU>(),
+            position = (m_TargetPlacement.transform.localPosition + m_PickPoseOffset).To<FLU>(),
             orientation = m_PickOrientation.To<FLU>()
         };
 

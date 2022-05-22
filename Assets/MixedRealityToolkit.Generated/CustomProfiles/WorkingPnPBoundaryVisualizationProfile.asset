@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9fd6338e77774badb73a2b1320b41caf, type: 3}
-  m_Name: KoddeLittRontBoundaryVisualizationProfile
+  m_Name: WorkingPnPBoundaryVisualizationProfile
   m_EditorClassIdentifier: 
   isCustomProfile: 1
   boundaryHeight: 3
