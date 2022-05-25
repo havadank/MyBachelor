@@ -16,19 +16,22 @@ namespace RosMessageTypes.Ur5EMoveitConfig
         public double[] joints;
         public Geometry.PoseMsg pick_pose;
         public Geometry.PoseMsg place_pose;
+        public bool execute;
 
         public MyMsgMsg()
         {
             this.joints = new double[6];
             this.pick_pose = new Geometry.PoseMsg();
             this.place_pose = new Geometry.PoseMsg();
+            this.execute = false;
         }
 
-        public MyMsgMsg(double[] joints, Geometry.PoseMsg pick_pose, Geometry.PoseMsg place_pose)
+        public MyMsgMsg(double[] joints, Geometry.PoseMsg pick_pose, Geometry.PoseMsg place_pose, bool execute)
         {
             this.joints = joints;
             this.pick_pose = pick_pose;
             this.place_pose = place_pose;
+            this.execute = execute;
         }
 
         public static MyMsgMsg Deserialize(MessageDeserializer deserializer) => new MyMsgMsg(deserializer);
@@ -38,6 +41,7 @@ namespace RosMessageTypes.Ur5EMoveitConfig
             deserializer.Read(out this.joints, sizeof(double), 6);
             this.pick_pose = Geometry.PoseMsg.Deserialize(deserializer);
             this.place_pose = Geometry.PoseMsg.Deserialize(deserializer);
+            deserializer.Read(out this.execute);
         }
 
         public override void SerializeTo(MessageSerializer serializer)
@@ -45,6 +49,7 @@ namespace RosMessageTypes.Ur5EMoveitConfig
             serializer.Write(this.joints);
             serializer.Write(this.pick_pose);
             serializer.Write(this.place_pose);
+            serializer.Write(this.execute);
         }
 
         public override string ToString()
@@ -52,7 +57,8 @@ namespace RosMessageTypes.Ur5EMoveitConfig
             return "MyMsgMsg: " +
             "\njoints: " + System.String.Join(", ", joints.ToList()) +
             "\npick_pose: " + pick_pose.ToString() +
-            "\nplace_pose: " + place_pose.ToString();
+            "\nplace_pose: " + place_pose.ToString() +
+            "\nexecute: " + execute.ToString();
         }
 
 #if UNITY_EDITOR

@@ -11,8 +11,8 @@ public class TrajectoryPlanner : MonoBehaviour
 {
     // Hardcoded variables
     const int k_NumRobotJoints = 6;
-    const float k_JointAssignmentWait = 0.9f; //0.1f
-    const float k_PoseAssignmentWait = 0.9f;  //0.5
+    const float k_JointAssignmentWait = 0.1f; //0.1f
+    const float k_PoseAssignmentWait = 0.5f;  //0.5f
 
     // Variables required for ROS communication
     [SerializeField]
@@ -37,7 +37,9 @@ public class TrajectoryPlanner : MonoBehaviour
     ArticulationBody[] m_JointArticulationBodies;
     ArticulationBody m_LeftGripper;
     ArticulationBody m_RightGripper;
-
+    bool boolExecute = false;
+    bool waitingForExecute;
+    float[] startQ = new float[9]; 
     // ROS Connector
     ROSConnection m_Ros;
 
@@ -59,6 +61,12 @@ public class TrajectoryPlanner : MonoBehaviour
             linkName += MyPublisher.LinkNames[i];
             m_JointArticulationBodies[i] = ur5e.transform.Find(linkName).GetComponent<ArticulationBody>();
         }
+
+        for (int i = 0; i < 9; i++) // setting starting joint values to 0
+        {
+            startQ[i] = 0;
+        }
+        StoreQstart();
 
         // Find left and right fingers
         //var rightGripper = linkName + "/tool_link/gripper_base/servo_head/control_rod_right/right_gripper";
@@ -110,8 +118,33 @@ public class TrajectoryPlanner : MonoBehaviour
         {
             joints.joints[i] = m_JointArticulationBodies[i].jointPosition[0];
         }
+        joints.execute = boolExecute;
 
         return joints;
+    }
+    public void ExecuteRealRobot()
+    {
+        waitingForExecute = true;
+        boolExecute = true;
+        PublishJoints(false);
+        boolExecute = false;
+    }
+    private void StoreQstart()
+    {
+        for (var joint = 0; joint < m_JointArticulationBodies.Length; joint++)
+        {
+            var joint1XDrive = m_JointArticulationBodies[joint].xDrive;
+            startQ[joint] = ((float)joint1XDrive.target);
+        }
+    }
+    public void GotoQstart()
+    {
+        for (var joint = 0; joint < m_JointArticulationBodies.Length; joint++)
+        {
+            var joint1XDrive = m_JointArticulationBodies[joint].xDrive;
+            joint1XDrive.target = startQ[joint];
+            m_JointArticulationBodies[joint].xDrive = joint1XDrive;
+        }
     }
 
     /// <summary>
@@ -120,7 +153,7 @@ public class TrajectoryPlanner : MonoBehaviour
     ///     Call the MoverService using the ROSConnection and if a trajectory is successfully planned,
     ///     execute the trajectories in a coroutine.
     /// </summary>
-    public void PublishJoints()
+    public void PublishJoints(bool storeStart)
     {
         var request = new MoverServiceUr5eRequest();
         request.joints_input = CurrentJointConfig();
@@ -143,6 +176,8 @@ public class TrajectoryPlanner : MonoBehaviour
 
         m_Ros.SendServiceMessage<MoverServiceUr5eResponse>(m_RosServiceName, request, TrajectoryResponse);
     }
+
+    
 
     void TrajectoryResponse(MoverServiceUr5eResponse response)
     {
@@ -172,6 +207,10 @@ public class TrajectoryPlanner : MonoBehaviour
     {
         if (response.trajectories != null)
         {
+            BoxCollider toggleCollider = m_Target.GetComponent<BoxCollider>();
+            BoxCollider toggleCollider2 = m_TargetPlacement.GetComponent<BoxCollider>();
+            toggleCollider.enabled = false; // toggle collider to have the robot not collide with the target and placemen
+            toggleCollider2.enabled = false;
             // For every trajectory plan returned
             for (var poseIndex = 0; poseIndex < response.trajectories.Length; poseIndex++)
             {
@@ -202,9 +241,16 @@ public class TrajectoryPlanner : MonoBehaviour
                 // Wait for the robot to achieve the final pose from joint assignment
                 yield return new WaitForSeconds(k_PoseAssignmentWait);
             }
-
+            toggleCollider.enabled = true;
+            toggleCollider2.enabled = true;
             // All trajectories have been executed, open the gripper to place the target cube
             //OpenGripper();
+            if (waitingForExecute)
+            {
+                StoreQstart(); 
+                waitingForExecute = false;
+            }
+            else GotoQstart();
         }
     }
 

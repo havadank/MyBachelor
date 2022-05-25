@@ -70,13 +70,20 @@ namespace QRTracking
                 }
             }
         }
-
         private void SetRobot(Pose pose)
         {
             UR5e = GameObject.Find("ur5e");
             UR5e.SetActive(false);
-            UR5e.transform.SetPositionAndRotation(pose.position, UR5e.transform.rotation);
+            Quaternion svar1 = UR5e.transform.rotation;
+            Quaternion svar = Quaternion.Euler(svar1.eulerAngles.x, pose.rotation.eulerAngles.y, svar1.eulerAngles.z);
+            
+            //svar.x, pose.rotation.eulerAngles.y, svar.z;
+            UR5e.transform.SetPositionAndRotation(pose.position+(new Vector3((float)0.9, 0, 0)), svar);
             UR5e.SetActive(true);
+        }
+        public void SetRobotOnQr()
+        {
+            setRobot = true;
         }
 
         private void InitializeSpatialGraphNode(bool force = false)
@@ -84,7 +91,7 @@ namespace QRTracking
             if (node == null || force)
             {
                 node = (Id != System.Guid.Empty) ? SpatialGraphNode.FromStaticNodeId(Id) : null;
-                Debug.Log("Initialize SpatialGraphNode Id= " + Id);
+                //Debug.Log("Initialize SpatialGraphNode Id= " + Id);
             }
         }
     }
