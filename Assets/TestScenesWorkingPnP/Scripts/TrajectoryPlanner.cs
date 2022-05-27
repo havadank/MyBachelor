@@ -110,7 +110,7 @@ public class TrajectoryPlanner : MonoBehaviour
     ///     Get the current values of the robot's joint angles.
     /// </summary>
     /// <returns>NiryoMoveitJoints</returns>
-    MyMsgMsg CurrentJointConfig()
+    MyMsgMsg CurrentJointConfig() // bygger MyMsg-fil
     {
         var joints = new MyMsgMsg();
 
@@ -126,7 +126,7 @@ public class TrajectoryPlanner : MonoBehaviour
     {
         waitingForExecute = true;
         boolExecute = true;
-        PublishJoints(false);
+        PublishJoints();
         boolExecute = false;
     }
     private void StoreQstart()
@@ -153,7 +153,7 @@ public class TrajectoryPlanner : MonoBehaviour
     ///     Call the MoverService using the ROSConnection and if a trajectory is successfully planned,
     ///     execute the trajectories in a coroutine.
     /// </summary>
-    public void PublishJoints(bool storeStart)
+    public void PublishJoints()
     {
         var request = new MoverServiceUr5eRequest();
         request.joints_input = CurrentJointConfig();
