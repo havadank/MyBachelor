@@ -24389,7 +24389,7 @@ MonoBehaviour:
       - m_Target: {fileID: 1070986317}
         m_TargetAssemblyTypeName: TrajectoryPlanner, Assembly-CSharp
         m_MethodName: PublishJoints
-        m_Mode: 6
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -34265,7 +34265,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!82 &2030468991
 AudioSource:
   m_ObjectHideFlags: 0
