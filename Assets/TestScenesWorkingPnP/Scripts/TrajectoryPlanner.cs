@@ -30,7 +30,7 @@ public class TrajectoryPlanner : MonoBehaviour
     public GameObject TargetPlacement { get => m_TargetPlacement; set => m_TargetPlacement = value; }
 
     // Assures that the gripper is always positioned above the m_Target cube before grasping.
-    readonly Quaternion m_PickOrientation = Quaternion.Euler(90, 90, 0);
+    readonly Quaternion m_PickOrientation = Quaternion.Euler(180, 90, 0);
     readonly Vector3 m_PickPoseOffset = Vector3.up * 0.01f;
 
     // Articulation Bodies
@@ -164,7 +164,7 @@ public class TrajectoryPlanner : MonoBehaviour
             position = (m_Target.transform.localPosition + m_PickPoseOffset).To<FLU>(),
 
             // The hardcoded x/z angles assure that the gripper is always positioned above the target cube before grasping.
-            orientation = Quaternion.Euler(90, m_Target.transform.eulerAngles.y, 0).To<FLU>()
+            orientation = Quaternion.Euler(180, m_Target.transform.eulerAngles.y, 0).To<FLU>()
         };
 
         // Place Pose
