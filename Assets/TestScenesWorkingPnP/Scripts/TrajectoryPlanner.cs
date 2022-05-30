@@ -253,7 +253,6 @@ public class TrajectoryPlanner : MonoBehaviour
             else GotoQstart();
         }
     }
-
     enum Poses
     {
         PreGrasp,
