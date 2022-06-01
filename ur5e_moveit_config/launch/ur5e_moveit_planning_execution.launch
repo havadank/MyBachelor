@@ -1,0 +1,26 @@
+<launch>
+  <arg name="tcp_ip" default="172.31.1.161"/>
+  <arg name="tcp_port" default="30003"/>
+  <arg name="sim" default="false" />
+  <arg name="debug" default="false" />
+  
+  <include file="$(find ur_robot_driver)/launch/ur5e_bringup.launch" >
+        <arg name="robot_ip" value="172.31.1.144" />
+  </include>
+
+  <!-- Remap follow_joint_trajectory -->
+  <remap if="$(arg sim)" from="/scaled_pos_joint_traj_controller/follow_joint_trajectory" to="/pos_joint_traj_controller/follow_joint_trajectory"/>
+
+  <node name="server_endpoint" pkg="ros_tcp_endpoint" type="default_server_endpoint.py" args="--wait" output="screen" respawn="true">
+		<param name="tcp_ip" type="string" value="$(arg tcp_ip)"/>
+        <param name="tcp_port" type="int" value="$(arg tcp_port)"/>
+	</node>
+
+  <node name="mover" pkg="ur5e_moveit_config" type="mover.py" args="--wait" output="screen"/>
+
+  <!-- Launch moveit -->
+  <include file="$(find ur5e_moveit_config)/launch/move_group.launch">
+    <arg name="debug" default="$(arg debug)" />
+  </include>
+
+</launch>
