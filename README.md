@@ -33,7 +33,7 @@ For help installing ROS, follow this tutorial:
 `ROS Noetic (for Ubuntu LTS 20-04)`: https://wiki.ros.org/noetic/Installation/Ubuntu  
 `ROS Melodic (for Ubuntu LTS 18-04)`: https://wiki.ros.org/melodic/Installation/Ubuntu
 
-Melodic was used when creating this project. Noetic should also work, it is the version I am using, but may need certain alterations (I will detail those that I know when they are relevant).
+Melodic was used when creating this project. Noetic should also work, I tried using this one, but you may need to make certain alterations (I will detail those that I know when they are relevant). I have since also installed Melodic, and I am currently working there, but I may still see if I can get Noetic up and running.
 
 First create a catkin workspace if you haven't done so yet. Follow the tutorials here if needed: https://wiki.ros.org/ROS/Tutorials  
 
@@ -45,7 +45,13 @@ Then you will need these four packages in your source (src) folder. (Just follow
 - Universal_Robots_ROS_Driver -> https://github.com/UniversalRobots/Universal_Robots_ROS_Driver
 
 ## Install instructions for ROS packages
-This assumes you have a catkin workspace (catkin_ws) setup in the default location
+This assumes you have a catkin workspace (catkin_ws) setup in the default location, and have followed the install instructions properly. 
+
+If you are missing dependencies (A likely occurance), there are instructions to update those below the main install instructions
+
+***
+
+### Main install
 
 `cd ~/catkin_ws`
 
@@ -53,7 +59,7 @@ This assumes you have a catkin workspace (catkin_ws) setup in the default locati
 
 `git clone https://github.com/Unity-Technologies/ROS-TCP-Endpoint.git src/ROS-TCP-Endpoint`  
 
-If like me you are using ros-noetic instead of melodic like the original project did, you might have to edit the `package.xml` and `default_server_endpoint.py` to force python 3. Instructions for that can be found at the bottom.
+If you are using ros-noetic instead of melodic like the original project did, you might have to edit the `package.xml` and `default_server_endpoint.py` to force python 3. Instructions for that can be found at the bottom.
 
 `git clone https://github.com/Unity-Technologies/Unity-Robotics-Hub.git src/Unity-Robotics-Hub`  
 
@@ -69,7 +75,7 @@ finally
 
 `catkin_make`
 
-The Universal_Robots_ROS_Driver will likely fail to compile, stating something along the lines of `No member mass` and `No member center_of_gravity` if this happens locate `~/catkin_ws/src/fmauch_universal_robot/ur_msgs/srv/SetPayload.srv` and replace the contents with:
+The Universal_Robots_ROS_Driver will likely fail to compile, stating something along the lines of `No member mass` and `No member center_of_gravity`. If this happens locate `~/catkin_ws/src/fmauch_universal_robot/ur_msgs/srv/SetPayload.srv` and replace the contents with:
 
 ``` C++
 float32 payload
@@ -81,37 +87,94 @@ geometry_msgs/Vector3 center_of_gravity
 bool success
 ```
 
+***
+
+### Missing dependencies
+
+First update rosdep: 
+
+`rosdep update`
+
+Then install all dependencies:
+
+`rosdep install --from-paths src --ignore-src -r -y`
+
 
 ## Modify ur_5_e_moveit_config
 Then to set up for the controller of the real robot in the ros side, do as shown in this video: https://www.youtube.com/watch?v=j6bBxfD_bYs
 
+**NOTE:**
+
+When everything is working correcly I will likely be making my own repo of fmauch_universal_robot with all the required files setup the way this project needs it, complete with modified packages and the like. For now though there are still manual configurations that are needed. Those can be found in the original instructions section
+
+***
+
+**OTHER MODIFICATIONS:**
+
+In the ROS_Driver you have to modify:
+
+`Universal_Robots_ROS_Driver/ur_robot_driver/launch/ur_common.launch`
+
+Comment out line 29 (Arg = kinematics_params)
+
+***
+
+In my case I had to manually add .msg files that were impropperly imported.
+
+Essentially I just went to:
+
+`/opt/ros/$ROS_DISTRO/share/moveit_msgs/msg` and copied all the files into `~/catkin_ws/src/fmauch_universal_robot/ur5_e_moveit_config/msg`
+
+This shouldn't be needed, but mine was being weird so that was done too.
+
+***
+
+**MODIFIED FILES LIST:** *(Excluding fmauch_universal_robot folder __(only after I make the custom fmauch repo)__ )*
+
+- `Universal_Robots_ROS_Driver/ur_robot_driver/launch/ur_common.launch` (Commented out line 29)
+- `Universal_Robots_ROS_Driver/ur_robot_driver/launch/ur5_e_bringup.launch` (Renamed from ur5e_bringup)
+- `ROS-TCP-Endpoint/launch/endpoint.launch` (Changed port)
+- `fmauch_universal_robot/ur5_e_moveit_config/tests/mover.py` (made executable)
+- `fmauch_universal_robot/ur5_e_moveit_config/launch/move_group.launch` (replaced `move_group/MoveGroupExecuteService` with `move_group/MoveGroupExecuteTrajectoryAction` line 53)
+
+***
 
 **IMPORTANT NOTE:**  
-I had to make alterations to this next process quite heavily.  
-I will make a list of things I did at some point, just note that for me at least, dropping the `ur5e_moveit_config` folder (from this repo) into the `fmauch_universal_robot` package and thereby replacing `ur5_e_moveit_config` (as I was instructed to do by the previous team) did not work (yes I know the instructions below don't say this, but I was told to do so in person regardless).  
-In the end I had to manually modify the existing `ur5_e_moveit_config` with both the files found in this repo, and some manual rewrites.  
+I had to make alterations to the original instructions process quite heavily.
+
+I will make a list of things I did at some point, just note that for me at least, dropping the `ur5e_moveit_config` folder (from this repo) into the `fmauch_universal_robot` package and thereby replacing `ur5_e_moveit_config` (as I was instructed to do by the previous team) did not work.
+
+In the end I had to manually modify the existing `ur5_e_moveit_config` both with the files found in this repo, and some manual rewrites.  
+
 Make sure to rename the files you copy into `fmauch_universal_robot`, so they (and their contents) read `ur5_e_` instead of the current `ur5e_`  
-I hope to be able to provide a better simpler solution soon, but for now be aware of the dangers of just overriding the files and folders.  
+
+I hope to be able to provide a better simpler solution soon, likely by means of a replacement repo, but for now be aware of the dangers of just overriding the files and folders.  
+
 There will likely be missing dependencies and more.
+
+***
 
 **Original instructions:**  
 To launch the ros side you will need some modified launchfiles and scripts.  
+
 These are:
 - ur5e_moveit_planning_execution.launch 
 - moveit_rviz.launch
 - mover.py
 - ...
+
 Replace the existing files with similar names in your file system with the given launchfiles and scripts.
+
 Also make sure the ip of the robot and the tcp server is correct in the launchfiles. 
 
 
-If something is missing, don't hesitate to contact me at havar@dankel.com
-
-
 # Force python3
+**NOTE:** I have changed to Melodic instead of Noetic, but I am leaving this here in case it will be useful to you.
+
 If by chance your project doesn't automatically select the propper python version, one thing to try is modifying the package.xml for the package, as well as specifying which python version to use in any script that is executable. The shebang (`#!/bin/bash` or `#!/usr/bin/env python` are examples of shebangs) in ROS should usually *(always)* be `#!/usr/bin/env python` according to the ROS wiki.
 
 On the ROS-TCP-Endpoint package I had issues relating to the python version.
+
 In my case I had to change the shebang in `~/catkin_ws/src/ROS-TCP-Endpoint/src/ros_tcp_endpoint/default_server_endpoint.py` to be `#!/usr/bin/env python3`, effectively forcing the interpreter to run python3 instead of python2. This is **NOT** the recommended way of doing it, as ROS should automatically use the correct python version if configured correctly, but might be usefull none the less.
 
 You should probably also alter the package.xml to make sure ROS knows to use python3.
@@ -137,13 +200,24 @@ As opposed to:
 
 The ROS documentation regarding python versions, and changing it can be found here: https://wiki.ros.org/UsingPython3
 
+# Finally
+
+Hope this guide is comprehensive enough.
+
+I have spent the better part of a week on getting the ROS side set up, so I decided it was way worth it to write a better guide than what I was given as a starting point.
+
+Between making many modifications, and swapping ROS version I am still not entirely where I want to be, but I am getting there.
+
+I have rewritten the parts that were decent, hopefully making them better, and added plenty more besides.
+
+Even then I know there will be issues that I have missed, but I hope there will be enough details to assist in troubleshooting, and make the process less painful.
+
+I left the original creators email below, where it was, so it should still be easy to contact them (or me through them if needed) when this is finally merged back into the original repository.
+
+Cheers and good luck.
+
+595489
+
 ***
 
-Hope this guide is comprehensive enough.  
-I have spent the better part of 3 days on getting the ROS side set up, so I decided it was way worth it to write a better guide than what I was given as a starting point.  
-I have rewritten the parts that were decent, hopefully making them better, and added plenty more besides.  
-Even then I know there will be issues that I have missed, but I hope there will be enough details to assist in troubleshooting, and make the process less painful.  
-I left the original email where it was, so it should still be easy to contact the original creators (or me through them if needed) when this is finally merged back into the original repository.  
-
-Cheers and good luck.  
-595489
+If something is missing, don't hesitate to contact me at havar@dankel.com
