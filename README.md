@@ -125,7 +125,15 @@ Essentially I just went to:
 
 `/opt/ros/$ROS_DISTRO/share/moveit_msgs/msg` and copied all the files into `~/catkin_ws/src/fmauch_universal_robot/ur5_e_moveit_config/msg`
 
-This shouldn't be needed, but mine was being weird so that was done too.
+This shouldn't be needed (afaik), but mine was being weird so that was done too.
+
+***
+
+I also ran this command, though I am unsure at the moment if that was even needed
+
+`sudo apt install ros-melodic-ros-control ros-melodic-joint-state-controller ros-melodic-effort-controllers ros-melodic-position-controllers ros-melodic-velocity-controllers ros-melodic-ros-controllers ros-melodic-gazebo-ros ros-melodic-gazebo-ros-control -y`
+
+This installs some controll nodes that I found online were needed to control a husky robot, but I don't know if they are needed for this or not. I still get the same message that I tried to search for on google when I found this command, so maybe maybe not
 
 ***
 
