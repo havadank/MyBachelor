@@ -77,20 +77,8 @@ public class TrajectoryPlanner : MonoBehaviour
     }
 
     /// <summary>
-    ///     Set joint values = real robot.
-    /// </summary>
-    /// <param name="jointValues"></param>
-    public void SetPose(float[] jointValues)
-    {
-        startQ = jointValues;
-        //StoreQstart();
-        GotoQstart();
-    }
-
-    /// <summary>
     ///     Close the gripper
     /// </summary>
-    /// 
     void CloseGripper()
     {
         var leftDrive = m_LeftGripper.xDrive;
