@@ -64,9 +64,10 @@ public class TrajectoryPlanner : MonoBehaviour
 
         for (int i = 0; i < 9; i++) // setting starting joint values to 0
         {
-            startQ[i] = 0;
+            startQ[i] = 20;
         }
-        StoreQstart();
+        //StoreQstart();
+        //GotoQstart();
 
         // Find left and right fingers
         //var rightGripper = linkName + "/tool_link/gripper_base/servo_head/control_rod_right/right_gripper";

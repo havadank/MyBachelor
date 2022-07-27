@@ -78,40 +78,56 @@ public class PoseSubscriber : MonoBehaviour
 
         if (resetPose)
         {
+            //StartCoroutine(ProcessMove(sensorMsg));
             var pose = new float[9];
             for (int i = 0; i < pose.Length; i++)
             {
                 pose[i] = 0;
             }
-            // Set joint values
-            for (int i = 0; i < sensorMsg.position.Length; i++)
+            for (int i = 0; i < k_NumRobotJoints; i++)
             {
-                var joint = (float)sensorMsg.position[i];
-
-                //System.Collections.Generic.List<float> jointQw = new System.Collections.Generic.List<float>();
-                //jointQw.Add(joint);
-                //m_JointArticulationBodies[i].SetJointPositions(jointQw);
-                //m_JointArticulationBodies[i].jointPosition = sensorMsg.position[i];
-
-                var jointXDrive = m_JointArticulationBodies[i].xDrive;
-                jointXDrive.target = joint;
-                m_JointArticulationBodies[i].xDrive = jointXDrive;
-
-                pose[i] = joint;
+                pose[i] = Mathf.Rad2Deg * (float)sensorMsg.position[i];
             }
-
-            
-
-            //publisher.GetComponent<TrajectoryPlanner>().SetPose(pose);
-
-            // Stop updating pose
-            resetCounter++;
-            if (resetCounter >= resetMaxItterations)
-            {
-                resetCounter = 0;
-                resetPose = false;
-            }
+            publisher.GetComponent<TrajectoryPlanner>().SetPose(pose);
         }
+    }
+
+    IEnumerator ProcessMove(Sensor sensorMsg)
+    {
+        var pose = new float[9];
+        for (int i = 0; i < pose.Length; i++)
+        {
+            pose[i] = 0;
+        }
+        // Set joint values
+        for (int i = 0; i < sensorMsg.position.Length; i++)
+        {
+            var joint = (float)sensorMsg.position[i];
+
+            //System.Collections.Generic.List<float> jointQw = new System.Collections.Generic.List<float>();
+            //jointQw.Add(joint);
+            //m_JointArticulationBodies[i].SetJointPositions(jointQw);
+            //m_JointArticulationBodies[i].jointPosition = sensorMsg.position[i];
+
+            var jointXDrive = m_JointArticulationBodies[i].xDrive;
+            jointXDrive.target = joint;
+            m_JointArticulationBodies[i].xDrive = jointXDrive;
+
+            pose[i] = joint;
+        }
+
+
+
+        //publisher.GetComponent<TrajectoryPlanner>().SetPose(pose);
+
+        // Stop updating pose
+        resetCounter++;
+        if (resetCounter >= resetMaxItterations)
+        {
+            resetCounter = 0;
+            resetPose = false;
+        }
+        yield return new WaitForSeconds(5.5f);
     }
 
     public void OnButtonPress()
