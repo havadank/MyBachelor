@@ -88,7 +88,14 @@ public class PoseSubscriber : MonoBehaviour
             {
                 pose[i] = Mathf.Rad2Deg * (float)sensorMsg.position[i];
             }
+            //Correct for wrong joint order
+            var shoulderJoint = pose[2];
+            var elbowJoint = pose[0];
+            pose[2] = elbowJoint;
+            pose[0] = shoulderJoint;
+
             publisher.GetComponent<TrajectoryPlanner>().SetPose(pose);
+            resetPose = false;
         }
     }
 
