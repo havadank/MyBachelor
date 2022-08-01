@@ -1,0 +1,37 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+struct Sphere
+{
+    float radius;
+    float3 center;
+};
+
+struct Ray
+{
+    float3 origin;
+    float3 direction;
+};
+
+struct RayHit
+{
+    float3 position;
+    float distance;
+    float3 normal;
+};
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+// RWTexture2D<float4> Result;
+
+RWStructuredBuffer<float3> _SphereBuffer;
+float3 _Target;
+float3 _Placement;
+
+[numthreads(32,32,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    // TODO: insert actual code here!
+
+    //Result[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+}

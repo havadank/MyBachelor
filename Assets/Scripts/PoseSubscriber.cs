@@ -99,6 +99,14 @@ public class PoseSubscriber : MonoBehaviour
         }
     }
 
+    public void OnButtonPress()
+    {
+        resetPose = true;
+    }
+
+
+    // Unused
+
     IEnumerator ProcessMove(Sensor sensorMsg)
     {
         var pose = new float[9];
@@ -135,11 +143,6 @@ public class PoseSubscriber : MonoBehaviour
             resetPose = false;
         }
         yield return new WaitForSeconds(5.5f);
-    }
-
-    public void OnButtonPress()
-    {
-        resetPose = true;
     }
 
     public void OnDebugButtonPress()
