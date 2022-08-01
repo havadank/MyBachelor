@@ -2,19 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//struct Sphere
-//{
-//    Vector3 position;
-//    float radius;
-//    //Vector3 albedo;
-//    //Vector3 specular;
+struct Sphere
+{
+    Vector3 position;
+    float radius;
+    //Vector3 albedo;
+    //Vector3 specular;
 
-//    public Sphere(Vector3 position, float radius)
-//    {
-//        this.position = position;
-//        this.radius = radius;
-//    }
-//}
+    public Sphere(Vector3 position, float radius)
+    {
+        this.position = position;
+        this.radius = radius;
+    }
+}
 
 [ExecuteAlways]
 public class RobotReachVisual : MonoBehaviour
@@ -39,7 +39,6 @@ public class RobotReachVisual : MonoBehaviour
     public ComputeShader sphereShader;
     [HideInInspector]
     public RenderTexture renderTexture;
-    //public RenderTexture destination;
 
     Sphere sphere;
 
@@ -54,6 +53,11 @@ public class RobotReachVisual : MonoBehaviour
 
     private void SetShaderParameters()
     {
+        Texture2D tx2d = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+        tx2d.SetPixel(0, 0, Color.clear);
+        tx2d.Apply();
+        SkyTexture = tx2d;
+
         sphereShader.SetMatrix("_CameraToWorld", camera.cameraToWorldMatrix);
         sphereShader.SetMatrix("_CameraInverseProjection", camera.projectionMatrix.inverse);
         sphereShader.SetTexture(0, "_SkyTexture", SkyTexture);
@@ -102,27 +106,27 @@ public class RobotReachVisual : MonoBehaviour
     {
         InitRenderTexture();
 
-        // Taken from RunSphereShader method
-        // Create sphereBuffer to house the sphere to compute
-        Sphere[] sphereArr = makeSphereArray();
-        var sphereBuffer = new ComputeBuffer(1, 1);
-        sphereBuffer.SetData(sphereArr);
+        //// Taken from RunSphereShader method
+        //// Create sphereBuffer to house the sphere to compute
+        //Sphere[] sphereArr = makeSphereArray();
+        //var sphereBuffer = new ComputeBuffer(1, 1);
+        //sphereBuffer.SetData(sphereArr);
 
-        // Taken from RunSphereShader method
-        // Create buffer to house scene geometry
-        GameObject[] gameObjects = makeGameObjectArray();
-        var geometryBuffer = new ComputeBuffer(geometryArraySize, 1);
-        geometryBuffer.SetData(gameObjects);
+        //// Taken from RunSphereShader method
+        //// Create buffer to house scene geometry
+        //GameObject[] gameObjects = makeGameObjectArray();
+        //var geometryBuffer = new ComputeBuffer(geometryArraySize, 1);
+        //geometryBuffer.SetData(gameObjects);
 
-        // Taken from RunSphereShader method
-        // Assign buffers to compute shader
-        sphereShader.SetBuffer(0, "_sphereBuffer", sphereBuffer);
-        sphereShader.SetBuffer(0, "_geometryBuffer", geometryBuffer);
+        //// Taken from RunSphereShader method
+        //// Assign buffers to compute shader
+        //sphereShader.SetBuffer(0, "_sphereBuffer", sphereBuffer);
+        //sphereShader.SetBuffer(0, "_geometryBuffer", geometryBuffer);
 
         sphereShader.SetTexture(0, "_Result", renderTexture);
         sphereShader.Dispatch(0, renderTexture.width / 32, renderTexture.height / 32, 1);
 
-        sphereBuffer.Release();
+        //sphereBuffer.Release();
 
         Graphics.Blit(renderTexture, destination);
     }
