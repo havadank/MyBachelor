@@ -32,7 +32,7 @@ public class ReachVisualizer : MonoBehaviour
     private float radius;
 
     public ComputeShader ReachShader;
-    //[HideInInspector]
+    [HideInInspector]
     public Texture SkyTexture;
     [HideInInspector]
     public RenderTexture renderTexture;
@@ -71,6 +71,12 @@ public class ReachVisualizer : MonoBehaviour
         ReachShader.SetVector("_SphereCenter", centerPosition);
         Vector4 SphereVec4 = new Vector4(centerPosition.x, centerPosition.y, centerPosition.z, radius);
         ReachShader.SetVector("_SphereVec4", SphereVec4);
+
+        Vector4 TargetVec4 = new Vector4(Target.transform.position.x, Target.transform.position.y, Target.transform.position.z, 0f);
+        Vector4 PlacementVec4 = new Vector4(Placement.transform.position.x, Placement.transform.position.y, Placement.transform.position.z, 0f);
+        ReachShader.SetVector("_TargetVec4", TargetVec4);
+        ReachShader.SetVector("_PlacementVec4", PlacementVec4);
+
 
         // Pass the Target and Placement to the shader
         ComputeBuffer interactionBuffer = new ComputeBuffer(2, 24);

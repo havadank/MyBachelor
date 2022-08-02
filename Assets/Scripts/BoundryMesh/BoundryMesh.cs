@@ -5,24 +5,50 @@ using UnityEngine;
 public class BoundryMesh
 {
     Mesh mesh;
-    float distance;
+    float size;
     Vector3 Center;
-    Vector3 LocalUp;
     Vector3 AxisA;
     Vector3 AxisB;
 
-    public BoundryMesh(Mesh mesh, Vector3 localUp, float distance)
+    public BoundryMesh(Mesh mesh, Vector3 center/*, float size*/)
     {
         this.mesh = mesh;
-        LocalUp = localUp;
-        Center = localUp*distance;
+        Center = center;
+        //this.size = size;
 
-        AxisA = new Vector3(localUp.y, localUp.z, localUp.x);
-        AxisB = Vector3.Cross(localUp, AxisA);
-        this.distance = distance;
+        AxisA = new Vector3(Center.y, Center.z, Center.x);
+        AxisB = Vector3.Cross(Center, AxisA);
     }
 
-    public void ConstructMesh()
+    public void ConstructTriMesh()
+    {
+        Vector3[] vertices = new Vector3[3];
+        int[] triangle = new int[3];
+
+        int i = 0;
+        for (int x = 0; x < 2; x++)
+        {
+            for (int y = 0; y < 1; y++)
+            {
+                Vector2 percent = new Vector2(x, y) / 1;
+                Vector3 pointOnTriangle = Center + (percent.x - .5f) * AxisA + (percent.y - .5f) * AxisB;
+                vertices[i] = pointOnTriangle;
+
+                i++;
+            }
+        }
+
+        triangle[0] = 0;
+        triangle[1] = 1;
+        triangle[2] = 2;
+
+        mesh.Clear();
+        mesh.vertices = vertices;
+        mesh.triangles = triangle;
+        mesh.RecalculateNormals();
+    }
+
+    public void ConstructHexMesh()
     {
         Vector3[] vertices = new Vector3[7];
         vertices[0] = Center;
@@ -31,7 +57,7 @@ public class BoundryMesh
         {
             for (int x = -1; x < 2; x++)
             {
-                Vector3 pointOnHex = (LocalUp * distance) + (x*AxisA).normalized + (y*AxisB).normalized;
+                Vector3 pointOnHex = Center + (x*AxisA*size).normalized + (y*AxisB*size).normalized;
             }
         }
 

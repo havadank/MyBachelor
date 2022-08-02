@@ -1,0 +1,44 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+// RWTexture2D<float4> Result;
+RWStructuredBuffer<float4> _Points;
+
+float4 _RobotReach;
+float3 _TargetPos;
+float3 _PlacePos;
+int _PointAmount;
+
+void GeneratePoints()
+{
+    for (int x = -_PointAmount/2; x < _PointAmount/2; x++)
+    {
+        for (int y = -_PointAmount/2; y < _PointAmount/2; y++)
+        {
+            for (int z = -_PointAmount/2; z < _PointAmount/2; z++)
+            {
+                float3 distance = float3(x, y, z)
+                if (distance-_RobotReach.xyz <= float3(0,0,0))
+                {
+                    float4 point = float4(x/50, y/50, z/50, 1);
+                }
+                else
+                {
+                    float4 point = float4(x/50, y/50, z/50, 0);
+                }
+            }
+        }
+    }
+}
+
+
+
+[numthreads(32,32,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    // TODO: insert actual code here!
+
+    // Result[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+}
