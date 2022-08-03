@@ -1,0 +1,52 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+// RWTexture2D<float4> Result;
+RWStructuredBuffer<float4> _Points;
+float3 _PlacePos;
+float3 _TargetPos;
+
+float Magnitude(float3 a)
+{
+    float x = a.x; float y = a.y; float z = a.z;
+    float xsq = x*x; float ysq = y*y; float zsq = z*z;
+    float addition = xsq+ysq+zsq;
+    return sqrt(addition);
+}
+
+
+float Distance(float3 a, float3 b)
+{
+    float3 c = float3(a-b);
+    return Magnitude(c);
+}
+
+[numthreads(32,32,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    // TODO: insert actual code here!
+
+    // Result[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+
+    float4 p4 = _Points[id.x];
+    float3 p3 = float3(p4.x, p4.y, p4.z);
+
+    float3 place = float3(_PlacePos.x, _PlacePos.y, _PlacePos.z);
+    float3 targ = float3(_TargetPos.x, _TargetPos.y, _TargetPos.z);
+
+    if (p4.w != 0)
+    {
+        if (Distance(p3, place) < 0.2)
+        {
+            p4.w = 10-Distance(p3, place);
+        }
+        else
+        {
+            p4.w = 1;
+        }
+    }
+
+    _Points[id.x] = p4;
+}

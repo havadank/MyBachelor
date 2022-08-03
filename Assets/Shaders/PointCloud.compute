@@ -10,24 +10,69 @@ float4 _RobotReach;
 float3 _TargetPos;
 float3 _PlacePos;
 int _PointAmount;
+float reachMagnitude;
+
+float Magnitude(float3 a)
+{
+    float x = a.x; float y = a.y; float z = a.z;
+    float xsq = x*x; float ysq = y*y; float zsq = z*z;
+    float addition = xsq+ysq+zsq;
+    return sqrt(addition);
+}
+
+
+float Distance(float3 a, float3 b)
+{
+    float3 c = float3(a-b);
+    return Magnitude(c);
+}
+
+void GeneratePointsTest()
+{
+    int numPoints = 20;
+    uint i = 0;
+    for (int x = -numPoints/2; x < numPoints/2; x++)
+    {
+        for (int y = -numPoints/2; y < numPoints/2; y++)
+        {
+            for (int z = -numPoints/2; z < numPoints/2; z++)
+            {
+                float3 reach = float3(_RobotReach.x, _RobotReach.y, _RobotReach.z);
+                float3 p = float3(x/20, y/20, z/20);
+                if (Distance(reach, p) < _RobotReach.w - 0.02 && Distance(reach, p) < _RobotReach.w + 0.02)
+                {
+                    _Points[i] = float4(p.x, p.y, p.z, 1);
+                }
+                else
+                {
+                    _Points[i] = float4(p.x, p.y, p.z, 0);
+                }
+                i++;
+            }
+        }
+    }
+}
 
 void GeneratePoints()
 {
+    uint i = 0;
     for (int x = -_PointAmount/2; x < _PointAmount/2; x++)
     {
         for (int y = -_PointAmount/2; y < _PointAmount/2; y++)
         {
             for (int z = -_PointAmount/2; z < _PointAmount/2; z++)
             {
-                float3 distance = float3(x, y, z)
-                if (distance-_RobotReach.xyz <= float3(0,0,0))
+                float3 reach = float3(_RobotReach.x, _RobotReach.y, _RobotReach.z);
+                float3 p = float3(x/20, y/20, z/20);
+                if (Distance(reach, p) < _RobotReach.w - 0.02 && Distance(reach, p) < _RobotReach.w + 0.02)
                 {
-                    float4 point = float4(x/50, y/50, z/50, 1);
+                    _Points[i] = float4(p.x, p.y, p.z, 1);
                 }
                 else
                 {
-                    float4 point = float4(x/50, y/50, z/50, 0);
+                    _Points[i] = float4(p.x, p.y, p.z, 0);
                 }
+                i++;
             }
         }
     }
@@ -35,10 +80,35 @@ void GeneratePoints()
 
 
 
-[numthreads(32,32,1)]
+[numthreads(1,1,1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
     // TODO: insert actual code here!
 
+    // GeneratePointsTest();
     // Result[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+
+    int numPoints = 20;
+    int pointsPerUnit = 10;
+    uint i = 0;
+    for (int x = -numPoints/2; x < numPoints/2; x++)
+    {
+        for (int y = -numPoints/2; y < numPoints/2; y++)
+        {
+            for (int z = -numPoints/2; z < numPoints/2; z++)
+            {
+                float3 reach = float3(_RobotReach.x, _RobotReach.y, _RobotReach.z);
+                float3 p = float3(x/pointsPerUnit, y/pointsPerUnit, z/pointsPerUnit);
+                if (Distance(reach, p) > _RobotReach.w - 0.02 && Distance(reach, p) < _RobotReach.w + 0.02)
+                {
+                    _Points[i] = float4(p.x, p.y, p.z, 1);
+                }
+                else
+                {
+                    _Points[i] = float4(p.x, p.y, p.z, 0);
+                }
+                i++;
+            }
+        }
+    }
 }

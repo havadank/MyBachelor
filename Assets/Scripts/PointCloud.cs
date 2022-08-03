@@ -1,20 +1,18 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PointCloud : MonoBehaviour
+public class PointCloud
 {
-    [SerializeField]
-    private int m_PointAmount = 20;
-    [SerializeField]
-    private int m_PointsPerUnit = 50;
-    [SerializeField]
+    private int m_PointAmount;
+    private int m_PointsPerUnit;
     private bool m_UseComputeShader = false;
 
-    public GameObject Target;
-    public GameObject Placement;
-    Vector3 TargetPos;
-    Vector3 PlacementPos;
+    //public GameObject Target;
+    //public GameObject Placement;
+    //Vector3 TargetPos;
+    //Vector3 PlacementPos;
 
     public GameObject Center;
     public GameObject Edge;
@@ -24,111 +22,76 @@ public class PointCloud : MonoBehaviour
 
     Vector4 RobotReach;
 
-    [SerializeField, HideInInspector]
-    Vector4[] PointsInSpace;
-    [SerializeField, HideInInspector]
-    GameObject[] BorderSpherePrimitives;
-    [SerializeField, HideInInspector]
-    MeshFilter[] BorderSpheres;
+    public Vector4[] PointsInSpace;
 
-    public ComputeShader pointsShader;
+    ComputeShader pointsShader;
     ComputeBuffer pointsBuffer;
 
-    // Start is called before the first frame update
-    void Start()
+    public PointCloud(int pointAmount, bool useComputeShader, GameObject target, GameObject placement, GameObject center, GameObject edge, ComputeShader pointsShader)
     {
-        TargetPos = Target.transform.position;
-        PlacementPos = Placement.transform.position;
+        m_PointAmount = pointAmount;
+        m_UseComputeShader = useComputeShader;
+        //Target = target;
+        //Placement = placement;
+        Center = center;
+        Edge = edge;
+        this.pointsShader = pointsShader;
+    }
+
+    public PointCloud(int pointAmount, int pointsPerUnit, bool useComputeShader, GameObject target, GameObject placement, GameObject center, GameObject edge, ComputeShader pointsShader)
+    {
+        m_PointAmount = pointAmount;
+        m_PointsPerUnit = pointsPerUnit;
+        m_UseComputeShader = useComputeShader;
+        //Target = target;
+        //Placement = placement;
+        Center = center;
+        Edge = edge;
+        this.pointsShader = pointsShader;
+    }
+
+    public Vector4[] getPointsInSpace()
+    {
+        return PointsInSpace;
+    }
+
+    public void Initialize()
+    {
+        //TargetPos = Target.transform.position;
+        //PlacementPos = Placement.transform.position;
 
         CenterPos = Center.transform.position;
         EdgePos = Edge.transform.position;
         radius = Vector3.Distance(CenterPos, EdgePos);
-
-        if (!m_UseComputeShader)
-        {
-            GeneratePointsCPU();
-            GenerateSpheresPrims();
-        }
-        
     }
 
     private void SetShaderParams()
     {
         RobotReach = new Vector4(CenterPos.x, CenterPos.y, CenterPos.z, radius);
+        PointsInSpace = new Vector4[m_PointAmount * m_PointAmount * m_PointAmount];
 
         pointsBuffer = new ComputeBuffer(m_PointAmount * m_PointAmount * m_PointAmount, sizeof(float) * 4);
-        pointsBuffer.SetData(GeneratePointsGPU());
+        pointsBuffer.SetData(PointsInSpace);
 
+        pointsShader.SetInt("_PointsAmount", m_PointAmount);
         pointsShader.SetVector("_RobotReach", RobotReach);
         pointsShader.SetBuffer(0, "_Points", pointsBuffer);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Generate()
     {
-        if (m_UseComputeShader)
+        if (!m_UseComputeShader)
         {
-            SetShaderParams();
+            GeneratePointsCPU();
         }
         else
         {
-            UpdatePrimsActiveState();
-            
+            SetShaderParams();
+            GeneratePointsGPU();
         }
 
     }
 
-    private void UpdatePrimsActiveState()
-    {
-        for (int i = 0; i < PointsInSpace.Length; i++)
-        {
-            Vector4 point = PointsInSpace[i];
-            Vector3 test = new Vector3(point.x, point.y, point.z);
-
-            if (PointsInSpace[i].w == 1 && BorderSpherePrimitives[i] != null)
-            {
-                BorderSpherePrimitives[i].SetActive(true);
-            }
-            if (Vector3.Distance(TargetPos, test) <= 0.5f && BorderSpherePrimitives[i] == null)
-            {
-                BorderSpherePrimitives[i].transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-            }
-            //if (BorderSpherePrimitives[i] != null && (Vector3.Distance(test, TargetPos) < 0.02f || Vector3.Distance(test, PlacementPos) < 0.02f))
-            //{
-            //    BorderSpherePrimitives[i].SetActive(true);
-            //}
-            //else if (BorderSpherePrimitives[i] != null)
-            //{
-            //    BorderSpherePrimitives[i].SetActive(false);
-            //}
-        }
-    }
-
-    private void GenerateSpheresPrims()
-    {
-        GameObject[] prims = new GameObject[PointsInSpace.Length];
-        for (int i = 0; i < prims.Length; i++)
-        {
-            Vector4 point = PointsInSpace[i];
-            Vector3 test = new Vector3(point.x, point.y, point.z);
-            
-            if (point.w == 0)
-            {
-                prims[i] = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                prims[i].transform.position = test;
-                prims[i].transform.localScale = new Vector3(0.02f, 0.02f, 0.02f);
-            }
-        }
-        BorderSpherePrimitives = prims;
-    }
-
-    private void GenerateSpheres()
-    {
-        if (BorderSpheres == null || BorderSpheres.Length == 0)
-        {
-            BorderSpheres = new MeshFilter[PointsInSpace.Length];
-        }
-    }
 
     private void GeneratePointsCPU()
     {
@@ -142,13 +105,13 @@ public class PointCloud : MonoBehaviour
                 {
                     Vector4 point;
                     Vector3 test = new Vector3((float)i / m_PointsPerUnit, (float)j / m_PointsPerUnit, (float)k / m_PointsPerUnit);
-                    if (Vector3.Distance(test, CenterPos) >= radius)
+                    if (Vector3.Distance(test, CenterPos) > radius + 0.1f && Vector3.Distance(test, CenterPos) < radius + 0.2f)
                     {
-                        point = new Vector4((float)i / m_PointsPerUnit, (float)j / m_PointsPerUnit, (float)k / m_PointsPerUnit, 0);
+                        point = new Vector4((float)i / m_PointsPerUnit, (float)j / m_PointsPerUnit, (float)k / m_PointsPerUnit, 1);
                     }
                     else
                     {
-                        point = new Vector4((float)i / m_PointsPerUnit, (float)j / m_PointsPerUnit, (float)k / m_PointsPerUnit, 1);
+                        point = new Vector4((float)i / m_PointsPerUnit, (float)j / m_PointsPerUnit, (float)k / m_PointsPerUnit, 0);
                     }
                     pointsArray[index] = point;
                     index++;
@@ -159,32 +122,11 @@ public class PointCloud : MonoBehaviour
         PointsInSpace = pointsArray;
     }
 
-    private Vector4[] GeneratePointsGPU()
+    private void GeneratePointsGPU()
     {
-        Vector4[] pointsArray = new Vector4[m_PointAmount * m_PointAmount * m_PointAmount];
-        int index = 0;
-        for (int i = -m_PointAmount / 2; i < m_PointAmount / 2; i++)
-        {
-            for (int j = -m_PointAmount / 2; j < m_PointAmount / 2; j++)
-            {
-                for (int k = -m_PointAmount / 2; k < m_PointAmount / 2; k++)
-                {
-                    Vector4 point;
-                    Vector3 test = new Vector3((float)i / m_PointsPerUnit, (float)j / m_PointsPerUnit, (float)k / m_PointsPerUnit);
-                    if (Vector3.Distance(test, CenterPos) > radius)
-                    {
-                        point = new Vector4((float)i / m_PointsPerUnit, (float)j / m_PointsPerUnit, (float)k / m_PointsPerUnit, 0);
-                    }
-                    else
-                    {
-                        point = new Vector4((float)i / m_PointsPerUnit, (float)j / m_PointsPerUnit, (float)k / m_PointsPerUnit, 1);
-                    }
-                    pointsArray[index] = point;
-                    index++;
-                }
-            }
-        }
-
-        return pointsArray;
+        pointsShader.Dispatch(0, 1, 1, 1);
+        //System.Threading.Thread.Sleep(5);
+        pointsBuffer.GetData(PointsInSpace);
+        pointsBuffer.Dispose();
     }
 }

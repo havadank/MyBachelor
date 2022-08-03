@@ -26951,7 +26951,7 @@ GameObject:
   - component: {fileID: 1452702880}
   - component: {fileID: 1452702881}
   m_Layer: 0
-  m_Name: PointCloud
+  m_Name: PointCloudController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26980,11 +26980,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1452702879}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a9b594a5f0d92f46863294a9eefe702, type: 3}
+  m_Script: {fileID: 11500000, guid: 6a8ed7a21b28cbd43a653583e005d0c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_PointAmount: 12
-  m_PointsPerUnit: 5
+  m_PointAmount: 30
+  m_PointsPerUnit: 10
   m_UseComputeShader: 0
   Target: {fileID: 1160593999}
   Placement: {fileID: 809404948}
@@ -26993,6 +26993,7 @@ MonoBehaviour:
   PointsInSpace: []
   BorderSpherePrimitives: []
   BorderSpheres: []
+  calcShader: {fileID: 7200000, guid: 35822a34edb0fd9439d766bc3e920f22, type: 3}
   pointsShader: {fileID: 7200000, guid: 39bd23a1099423f40a857cbbf0e775a7, type: 3}
 --- !u!1 &1460915631
 GameObject:
@@ -44793,7 +44794,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2020620774}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -20.570465, y: -11.279911, z: 5.810263}
+  m_LocalPosition: {x: 0, y: 0, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1070986314}
