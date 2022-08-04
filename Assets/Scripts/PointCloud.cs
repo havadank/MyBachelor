@@ -97,21 +97,21 @@ public class PointCloud
     {
         Vector4[] pointsArray = new Vector4[m_PointAmount * m_PointAmount * m_PointAmount];
         int index = 0;
-        for (int i = -m_PointAmount/2; i<m_PointAmount/2; i++)
+        for (int x = -m_PointAmount/2; x<m_PointAmount/2; x++)
         {
-            for (int j = -m_PointAmount/2; j < m_PointAmount/2; j++)
+            for (int y = -m_PointAmount/2; y < m_PointAmount/2; y++)
             {
-                for (int k = -m_PointAmount/2; k < m_PointAmount/2; k++)
+                for (int z = -m_PointAmount/2; z < m_PointAmount/2; z++)
                 {
                     Vector4 point;
-                    Vector3 test = new Vector3((float)i / m_PointsPerUnit, (float)j / m_PointsPerUnit, (float)k / m_PointsPerUnit);
+                    Vector3 test = new Vector3((float)x / m_PointsPerUnit, (float)y / m_PointsPerUnit, (float)z / m_PointsPerUnit);
                     if (Vector3.Distance(test, CenterPos) > radius + 0.1f && Vector3.Distance(test, CenterPos) < radius + 0.2f)
                     {
-                        point = new Vector4((float)i / m_PointsPerUnit, (float)j / m_PointsPerUnit, (float)k / m_PointsPerUnit, 1);
+                        point = new Vector4(((float)x + CenterPos.x) / m_PointsPerUnit, ((float)y + CenterPos.y) / m_PointsPerUnit, ((float)z + CenterPos.z) / m_PointsPerUnit, 1);
                     }
                     else
                     {
-                        point = new Vector4((float)i / m_PointsPerUnit, (float)j / m_PointsPerUnit, (float)k / m_PointsPerUnit, 0);
+                        point = new Vector4(((float)x + CenterPos.x) / m_PointsPerUnit, ((float)y + CenterPos.y) / m_PointsPerUnit, ((float)z + CenterPos.z) / m_PointsPerUnit, 0);
                     }
                     pointsArray[index] = point;
                     index++;

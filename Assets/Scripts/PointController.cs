@@ -7,11 +7,14 @@ public class PointController : MonoBehaviour
     PointCloud pointCloud;
 
     [SerializeField]
-    private int m_PointAmount = 100;
+    private int m_WidthUnit = 2;
+    private int m_PointAmount;
     [SerializeField]
     private int m_PointsPerUnit = 50;
     [SerializeField]
-    private bool m_UseComputeShader = false;
+    private bool m_UseComputeShaderProcessing = false;
+    [SerializeField]
+    private bool m_UseComputeShaderGeneration = false;
 
     public GameObject Target;
     public GameObject Placement;
@@ -44,8 +47,9 @@ public class PointController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        m_PointAmount = m_WidthUnit * m_PointsPerUnit;
         geometryList = new List<GameObject>();
-        pointCloud = new PointCloud(m_PointAmount, m_PointsPerUnit, /*m_UseComputeShader*/ false, Target, Placement, Center, Edge, pointsShader);
+        pointCloud = new PointCloud(m_PointAmount, m_PointsPerUnit, m_UseComputeShaderGeneration, Target, Placement, Center, Edge, pointsShader);
         pointCloud.Initialize();
         pointCloud.Generate();
         PointsInSpace = pointCloud.getPointsInSpace();
@@ -58,7 +62,7 @@ public class PointController : MonoBehaviour
     {
         TargetPos = Target.transform.position;
         PlacementPos = Placement.transform.position;
-        if (m_UseComputeShader)
+        if (m_UseComputeShaderProcessing)
         {
             //stuff += 0.0001f;
             SetShaderParams();
@@ -110,13 +114,14 @@ public class PointController : MonoBehaviour
         {
             if (Vector3.Distance(geometryArr[i].transform.position, TargetPos) < 0.3f)
             {
-                float scale = 0.05f;
-                geometryArr[i].transform.localScale = new Vector3(scale, scale, scale);
+                float scale = (Vector3.Distance(geometryArr[i].transform.position, TargetPos));
+                float s = Mathf.Clamp(0.003f / (scale - radius), 0.0f, 0.05f);
+                geometryArr[i].transform.localScale = new Vector3(s, s, s);
             }
-            else if (Vector3.Distance(geometryArr[i].transform.position, PlacementPos) < 0.4f)
+            else if (Vector3.Distance(geometryArr[i].transform.position, PlacementPos) < 0.3f)
             {
                 float scale = (Vector3.Distance(geometryArr[i].transform.position, PlacementPos));
-                float s = Mathf.Clamp(0.005f / (scale - radius), 0.0f, 0.05f);
+                float s = Mathf.Clamp(0.003f / (scale - radius), 0.0f, 0.05f);
                 geometryArr[i].transform.localScale = new Vector3(s, s, s);
             }
             else
@@ -145,7 +150,8 @@ public class PointController : MonoBehaviour
             }
             else
             {
-                GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                GameObject sphere = new GameObject("Sphere");
+                sphere.AddComponent<Planet>();
                 sphere.transform.position = new Vector3(point.x, point.y, point.z);
                 sphere.transform.localScale = new Vector3(0.002f * point.w, 0.002f * point.w, 0.002f * point.w);
                 geometryList.Add(sphere);
