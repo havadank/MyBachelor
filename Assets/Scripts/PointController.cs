@@ -12,6 +12,8 @@ public class PointController : MonoBehaviour
     [SerializeField]
     private int m_PointsPerUnit = 50;
     [SerializeField]
+    private bool m_AllowUnfinishedOptions = false;
+    [SerializeField]
     private bool m_UseComputeShaderProcessing = false;
     [SerializeField]
     private bool m_UseComputeShaderGeneration = false;
@@ -47,6 +49,11 @@ public class PointController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (!m_AllowUnfinishedOptions)
+        {
+            m_UseComputeShaderGeneration = false;
+            m_UseComputeShaderProcessing = false;
+        }
         m_PointAmount = m_WidthUnit * m_PointsPerUnit;
         geometryList = new List<GameObject>();
         pointCloud = new PointCloud(m_PointAmount, m_PointsPerUnit, m_UseComputeShaderGeneration, Target, Placement, Center, Edge, pointsShader);

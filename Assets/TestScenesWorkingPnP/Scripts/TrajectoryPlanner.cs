@@ -197,11 +197,17 @@ public class TrajectoryPlanner : MonoBehaviour
         if (response.trajectories.Length > 0)
         {
             Debug.Log("Trajectory returned.");
+            GameObject.Find("StatusNormal").SetActive(false);
+            GameObject.Find("StatusGreen").SetActive(true);
+            GameObject.Find("StatusError").SetActive(false);
             StartCoroutine(ExecuteTrajectories(response));
         }
         else
         {
             Debug.LogError("No trajectory returned from MoverService.");
+            GameObject.Find("StatusNormal").SetActive(false);
+            GameObject.Find("StatusGreen").SetActive(false);
+            GameObject.Find("StatusError").SetActive(true);
         }
     }
 
