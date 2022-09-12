@@ -1,0 +1,162 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+struct Ball
+{
+    float radius;
+    float3 center;
+};
+
+struct Ray
+{
+    float3 origin;
+    float3 direction;
+};
+
+struct RayHit
+{
+    float3 position;
+    float distance;
+    float3 normal;
+};
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> _Result;
+static const float PI = 3.14159265f;
+float4x4 _CameraToWorld;
+float4x4 _CameraInverseProjection;
+// RWStructuredBuffer<Ball> _SphereBuffer;
+RWStructuredBuffer<float3> _InteractionBuffer;
+Texture2D<float4> _SkyTexture;
+SamplerState sampler_SkyTexture;
+SamplerState _CameraDepthTexture;
+float3 _Target;
+float4 _TargetVec4;
+float3 _Placement;
+float4 _PlacementVec4;
+float3 _SphereCenter;
+float4 _SphereVec4;
+float _Radius;
+// Ball _Sphere;
+
+RayHit CreateRayHit()
+{
+    RayHit hit;
+    hit.position = float3(0.0f, 0.0f, 0.0f);
+    hit.distance = 1.#INF;
+    hit.normal = float3(0.0f, 0.0f, 0.0f);
+    return hit;
+}
+
+Ray CreateRay(float3 origin, float3 direction)
+{
+    Ray ray;
+    ray.origin = origin;
+    ray.direction = direction;
+    return ray;
+}
+
+Ray CreateCameraRay(float2 uv)
+{
+    // Transform camera origin to world space
+    float3 origin = mul(_CameraToWorld, float4(0.0f, 0.0f, 0.0f, 1.0f)).xyz;
+
+    // Invert the perspective projection of the view-space position
+    float3 direction = mul(_CameraInverseProjection, float4(uv, 0.0f, 1.0f)).xyz;
+    // Transform the direction from camera to world space and normalize
+    direction = mul(_CameraToWorld, float4(direction, 0.0f)).xyz;
+    direction = normalize(direction);
+
+    return CreateRay(origin, direction);
+}
+
+void IntersectSphere(Ray ray, inout RayHit bestHit, float4 sphere)
+{
+    // Calculate distance along the ray where the sphere is intersected
+    float3 d = ray.origin - sphere.xyz;
+    float p1 = -dot(ray.direction, d);
+    float p2sqr = p1 * p1 - dot(d, d) + sphere.w * sphere.w;
+    if (p2sqr < 0)
+        return;
+    float p2 = sqrt(p2sqr);
+    float t = p1 - p2 > 0 ? p1 - p2 : p1 + p2;
+    if (t > 0 && t < bestHit.distance)
+    {
+        bestHit.distance = t;
+        bestHit.position = ray.origin + t * ray.direction;
+        bestHit.normal = normalize(bestHit.position - sphere.xyz);
+    }
+}
+
+void DistanceToEdge(float4 origin, float4 target)
+{
+    Ray ray = CreateRay(origin.xyz, target.xyz);
+    RayHit hit = CreateRayHit();
+    
+}
+
+void IntersectTarget(Ray ray, inout RayHit bestHit, float3 center)
+{
+    float3 d = ray.origin - center.xyz;
+    float p1 = -dot(ray.direction, d);
+    float p2sqr = p1 * p1 - dot(d, d) + 0.1f * 0.1f;
+    if (p2sqr < 0)
+        return;
+    float p2 = sqrt(p2sqr);
+    float t = p1 - p2 > 0 ? p1 - p2 : p1 + p2;
+    if (t > 0 && t < bestHit.distance)
+    {
+        bestHit.distance = t;
+        bestHit.position = ray.origin + t * ray.direction;
+        // bestHit.normal = normalize(bestHit.position - sphere.xyz);
+    }
+}
+
+RayHit Trace(Ray ray)
+{
+    RayHit bestHit = CreateRayHit();
+    // IntersectGroundPlane(ray, bestHit);
+    
+    // IntersectTarget(ray, bestHit, _InteractionBuffer[1]);
+    IntersectSphere(ray, bestHit, float4(_SphereCenter, _Radius));
+    return bestHit;
+}
+
+float3 Shade(inout Ray ray, RayHit hit)
+{
+    if (hit.distance < 1.#INF)
+    {
+        // Return the normal
+        return hit.normal * 0.5f + 0.5f;
+    }
+    else
+    {
+       // Sample the skybox and write it
+       float theta = acos(ray.direction.y) / -PI;
+       float phi = atan2(ray.direction.x, -ray.direction.z) / PI * 0.5f;
+       return _SkyTexture.SampleLevel(sampler_SkyTexture, float2(phi, theta), 0);
+
+    }
+}
+
+[numthreads(32,32,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    // TODO: insert actual code here!
+
+    /// Get the dimensions of the RenderTexture
+    uint width, height;
+    _Result.GetDimensions(width, height);
+
+    // Transform pixel to [-1,1] range
+    float2 uv = float2((id.xy + float2(0.5f, 0.5f)) / float2(width, height) * 2.0f - 1.0f);
+
+    // Get a ray for the UVs
+    Ray ray = CreateCameraRay(uv);
+
+    // Trace and shade
+    RayHit hit = Trace(ray);
+    float3 result = Shade(ray, hit);
+    _Result[id.xy] = float4(result, 0.2f);
+}
